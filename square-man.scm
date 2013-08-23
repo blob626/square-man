@@ -1,7 +1,8 @@
 (use-modules (2d sprite)
              (2d game-loop)
              (2d window)
-	     (2d helpers))
+	     (2d helpers)
+	     (2d vector))
 
 (define *window-width* 800)
 (define *window-height* 600)
@@ -19,10 +20,18 @@
   (close-window)
   (quit))
 
+(define (move-by sprite delta)
+  (set-sprite-position! sprite (vector
+				(+ (vx (sprite-position sprite))
+				   (vx delta))
+				(+ (vy (sprite-position sprite))
+				   (vy delta)))))
+
 (define (key-down key mod unicode)
   (cond ((any-equal? key 'escape 'q)
-         (quit-demo))))
-
+         (quit-demo))
+	((any-equal? key 'a)
+	 (move-by sprite (vector -10 0)))))
 ;; Draw our sprite
 (define (render)
   (draw-sprite sprite))
