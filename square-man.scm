@@ -26,7 +26,7 @@
 
 ;; Load a sprite and center it on the screen.
 (define *sprite*
-  (load-sprite "/home/zan-xhipe/projects/square-man/sprite.png"
+  (load-sprite "/home/zan-xhipe/projects/square-man/player.png"
                #:position (vector (/ *window-width* 2)
                                   (/ *window-height* 2))))
 
