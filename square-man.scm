@@ -10,6 +10,17 @@
 ;; Open the window.
 (open-window *window-width* *window-height*)
 
+(define-record-type <entity>
+  (make-entity sprite velocity)
+  (sprite entity-sprite set-entity-sprite!)
+  (velocity entity-velocity set-entity-velocity!))
+
+(define (entity-position entity)
+  (sprite-position entity))
+
+(define (set-entity-position! entity value)
+  (set-sprite-position! entity value))
+
 ;; Load a sprite and center it on the screen.
 (define *sprite*
   (load-sprite "/home/zan-xhipe/projects/square-man/sprite.png"
