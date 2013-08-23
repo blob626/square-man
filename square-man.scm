@@ -2,7 +2,9 @@
              (2d game-loop)
              (2d window)
 	     (2d helpers)
-	     (2d vector))
+	     (2d vector)
+
+	     (srfi srfi-9))
 
 (define *window-width* 800)
 (define *window-height* 600)
@@ -12,6 +14,7 @@
 
 (define-record-type <entity>
   (make-entity sprite velocity)
+  entity?
   (sprite entity-sprite set-entity-sprite!)
   (velocity entity-velocity set-entity-velocity!))
 
@@ -27,6 +30,8 @@
                #:position (vector (/ *window-width* 2)
                                   (/ *window-height* 2))))
 
+(define *player* (make-entity *sprite* #(0 0)))
+
 (define (quit-demo)
   (close-window)
   (quit))
@@ -38,21 +43,25 @@
 				(+ (vy (sprite-position sprite))
 				   (vy delta)))))
 
+(define (update-enity entity)
+  (move-by (entity-sprite entity) (entity-velocity entity)))
+
 (define (key-down key mod unicode)
   (cond ((any-equal? key 'escape 'q)
          (quit-demo))
 	((any-equal? key 'a)
-	 (move-by *sprite* (vector -10 0)))
+	 (set-entity-velocity! *player* #(-1 0)))
 	((any-equal? key 'd)
-	 (move-by *sprite* (vector 10 0)))
+	 (set-entity-velocity! *player* #(1 0)))
 	((any-equal? key 's)
-	 (move-by *sprite* (vector 0 -10)))
+	 (set-entity-velocity! *player* #(0 -1)))
 	((any-equal? key 'w)
-	 (move-by *sprite* (vector 0 10)))))
+	 (set-entity-velocity! *player* #(0 1)))))
 
 ;; Draw our sprite
 (define (render)
-  (draw-sprite *sprite*))
+  (draw-sprite *sprite*)
+  (update-enity *player*))
 
 ;; Register hooks. Lambdas are used as "trampolines" so that render
 ;; and key-down can be redefined later and the hooks will call the
