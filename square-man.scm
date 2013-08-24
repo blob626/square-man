@@ -54,11 +54,7 @@
   (quit))
 
 (define (move-by! sprite delta)
-  (set-sprite-position! sprite (vector
-				(+ (vx (sprite-position sprite))
-				   (vx delta))
-				(+ (vy (sprite-position sprite))
-				   (vy delta)))))
+  (set-sprite-position! sprite (v+ (sprite-position sprite) delta)))
 
 (define (update-entity! entity)
   (move-by! (entity-sprite entity) (entity-velocity entity)))
