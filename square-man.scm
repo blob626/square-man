@@ -49,7 +49,7 @@
 				    #:position position)
 		       #(0 4))))))
 
-(define (quit-demo)
+(define (quit-game)
   (close-window)
   (quit))
 
@@ -115,7 +115,7 @@
 
 (define (key-down key mod unicode)
   (cond ((any-equal? key 'escape 'q)
-         (quit-demo))
+         (quit-game))
 	((any-equal? key 'a)
 	 (set-entity-velocity! *player* #(-1 0)))
 	((any-equal? key 'd)
@@ -143,7 +143,7 @@
 ;; Register hooks. Lambdas are used as "trampolines" so that render
 ;; and key-down can be redefined later and the hooks will call the
 ;; updated procedures.
-(add-hook! on-quit-hook (lambda () (quit-demo)))
+(add-hook! on-quit-hook (lambda () (quit-game)))
 (add-hook! on-render-hook (lambda () (render)))
 (add-hook! on-update-hook (lambda () (update)))
 (add-hook! on-key-down-hook (lambda (key mod unicode) (key-down key mod unicode)))
