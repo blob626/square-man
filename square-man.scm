@@ -66,14 +66,14 @@
 (define (draw-entity entity)
   (draw-sprite (entity-sprite entity)))
 
-(define (seconds->timesteps seconds)
+(define (seconds->ticks seconds)
   (floor (* seconds 60)))
 
 (define (move-left enemy)
   (schedule-action
    (lerp (lambda (x)
 	   (set-entity-position! enemy (vector x (vy (entity-position enemy)))))
-	 (- *window-width* 64) 64 (seconds->timesteps 3))))
+	 (- *window-width* 64) 64 (seconds->ticks 3))))
 
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
