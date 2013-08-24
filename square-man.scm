@@ -27,17 +27,17 @@
 
 ;; Load a sprite and center it on the screen.
 (define *player-sprite*
-  (load-sprite "/home/zan-xhipe/projects/square-man/player.png"
+  (load-sprite "images/player.png"
                #:position (vector (/ *window-width* 2)
                                   (/ *window-height* 2))))
 
 (define *player* (make-entity *player-sprite* #(0 0)))
 
-(define *bullet-texture* (load-texture "/home/zan-xhipe/projects/square-man/bullet.png"))
+(define *bullet-texture* (load-texture "images/bullet.png"))
 
 (define *bullets* (list))
 
-(define *enemy-texture* (load-texture "/home/zan-xhipe/projects/square-man/enemy.png"))
+(define *enemy-texture* (load-texture "images/enemy.png"))
 
 (define *enemies* (list))
 
@@ -85,9 +85,6 @@
 (define (destroy-enemy enemy)
   (set! *enemies* (delete enemy *enemies*)))
 
-(define (draw-list lst)
-  (map draw-entity lst))
-
 (define (out-of-window? position)
   (or (> (vx position) *window-width*)
       (< (vx position) 0)
@@ -131,11 +128,17 @@
   (update-entity! *player*)
   (update-bullets! *bullets*))
 
+(define *batch* (make-sprite-batch))
+
 ;; Draw our sprite
 (define (render)
-  (draw-entity *player*)
-  (draw-list *bullets*)
-  (draw-list *enemies*))
+  (with-sprite-batch
+   *batch*
+   (for-each
+    (lambda (sprite) (draw-entity sprite))
+    (append (list *player*)
+	    *bullets*
+	    *enemies*))))
 
 ;; Register hooks. Lambdas are used as "trampolines" so that render
 ;; and key-down can be redefined later and the hooks will call the
