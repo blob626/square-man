@@ -4,6 +4,7 @@
 	     (2d helpers)
 	     (2d vector)
 	     (2d texture)
+	     (2d actions)
 	     (srfi srfi-9))
 
 (define *window-width* 800)
@@ -36,15 +37,17 @@
 
 (define *bullets* (list))
 
+(define *enemy-texture* (load-texture "/home/zan-xhipe/projects/square-man/enemy.png"))
+
+(define *enemies* (list))
+
 (define (shoot position)
   (set! *bullets*
 	(append *bullets*
 		(list (make-entity
 		       (make-sprite *bullet-texture*
 				    #:position position)
-		       #(0 4)))))
-  (display *bullets*)
-  (newline))
+		       #(0 4))))))
 
 (define (quit-demo)
   (close-window)
@@ -62,6 +65,28 @@
 
 (define (draw-entity entity)
   (draw-sprite (entity-sprite entity)))
+
+(define (seconds->timesteps seconds)
+  (floor (* seconds 60)))
+
+(define (move-left enemy)
+  (schedule-action
+   (lerp (lambda (x)
+	   (set-entity-position! enemy (vector x (vy (entity-position enemy)))))
+	 (- *window-width* 64) 64 (seconds->timesteps 3))))
+
+(define (spawn-enemy position)
+  (let ((enemy (make-entity (make-sprite *enemy-texture*
+					 #:position position)
+			    #(0 0))))
+    (move-left enemy)
+    (set! *enemies* (append *enemies* (list enemy)))))
+
+(define (destroy-enemy enemy)
+  (set! *enemies* (delete enemy *enemies*)))
+
+(define (draw-list lst)
+  (map draw-entity lst))
 
 (define (out-of-window? position)
   (or (> (vx position) *window-width*)
@@ -100,14 +125,18 @@
 	((any-equal? key 'w)
 	 (set-entity-velocity! *player* #(0 1)))
 	((any-equal? key 'space)
-	 (shoot (entity-position *player*)))))
+	 (shoot (entity-position *player*)))
+	((any-equal? key 'e)
+	 (spawn-enemy (vector (- *window-width* 64)
+			      (- *window-height* 64))))))
 
 ;; Draw our sprite
 (define (render)
   (draw-entity *player*)
   (update-entity! *player*)
   (update-bullets! *bullets*)
-  (draw-bullets *bullets*))
+  (draw-list *bullets*)
+  (draw-list *enemies*))
 
 ;; Register hooks. Lambdas are used as "trampolines" so that render
 ;; and key-down can be redefined later and the hooks will call the
