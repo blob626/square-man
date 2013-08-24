@@ -38,31 +38,52 @@
 
 (define (shoot position)
   (set! *bullets*
-	(cons (make-entity
-	       (make-sprite *bullet-texture*
-			    #:position position)
-	       #(0 4))
-	      *bullets*)))
+	(append *bullets*
+		(list (make-entity
+		       (make-sprite *bullet-texture*
+				    #:position position)
+		       #(0 4)))))
+  (display *bullets*)
+  (newline))
 
 (define (quit-demo)
   (close-window)
   (quit))
 
-(define (move-by sprite delta)
+(define (move-by! sprite delta)
   (set-sprite-position! sprite (vector
 				(+ (vx (sprite-position sprite))
 				   (vx delta))
 				(+ (vy (sprite-position sprite))
 				   (vy delta)))))
 
-(define (update-entity entity)
-  (move-by (entity-sprite entity) (entity-velocity entity)))
+(define (update-entity! entity)
+  (move-by! (entity-sprite entity) (entity-velocity entity)))
 
 (define (draw-entity entity)
   (draw-sprite (entity-sprite entity)))
 
-(define (update-bullets bullets)
-  (map update-entity bullets))
+(define (out-of-window? position)
+  (or (> (vx position) *window-width*)
+      (< (vx position) 0)
+      (> (vy position) *window-height*)
+      (< (vy position) 0)))
+
+(define (delete item lst)
+  (if (null? lst)
+      '()
+      (if (eqv? item (car lst))
+	  (delete item (cdr lst))
+	  (cons (car lst)
+		(delete item (cdr lst))))))
+
+(define (update-bullet! bullet)
+  (if (out-of-window? (entity-position bullet))
+      (set! *bullets* (delete! bullet *bullets*))
+      (update-entity! bullet)))
+
+(define (update-bullets! bullets)
+    (map update-bullet! bullets))
 
 (define (draw-bullets bullets)
   (map draw-entity bullets))
@@ -84,8 +105,8 @@
 ;; Draw our sprite
 (define (render)
   (draw-entity *player*)
-  (update-entity *player*)
-  (update-bullets *bullets*)
+  (update-entity! *player*)
+  (update-bullets! *bullets*)
   (draw-bullets *bullets*))
 
 ;; Register hooks. Lambdas are used as "trampolines" so that render
