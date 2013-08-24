@@ -130,11 +130,13 @@
 	 (spawn-enemy (vector (- *window-width* 64)
 			      (- *window-height* 64))))))
 
+(define (update)
+  (update-entity! *player*)
+  (update-bullets! *bullets*))
+
 ;; Draw our sprite
 (define (render)
   (draw-entity *player*)
-  (update-entity! *player*)
-  (update-bullets! *bullets*)
   (draw-list *bullets*)
   (draw-list *enemies*))
 
@@ -143,6 +145,7 @@
 ;; updated procedures.
 (add-hook! on-quit-hook (lambda () (quit-demo)))
 (add-hook! on-render-hook (lambda () (render)))
+(add-hook! on-update-hook (lambda () (update)))
 (add-hook! on-key-down-hook (lambda (key mod unicode) (key-down key mod unicode)))
 
 ;; Start the game loop.
