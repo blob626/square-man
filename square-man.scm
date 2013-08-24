@@ -79,7 +79,7 @@
 
 (define (update-bullet! bullet)
   (if (out-of-window? (entity-position bullet))
-      (set! *bullets* (delete! bullet *bullets*))
+      (set! *bullets* (delete bullet *bullets*))
       (update-entity! bullet)))
 
 (define (update-bullets! bullets)
