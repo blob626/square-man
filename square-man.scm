@@ -3,7 +3,7 @@
              (2d window)
 	     (2d helpers)
 	     (2d vector)
-
+	     (2d texture)
 	     (srfi srfi-9))
 
 (define *window-width* 800)
@@ -19,18 +19,30 @@
   (velocity entity-velocity set-entity-velocity!))
 
 (define (entity-position entity)
-  (sprite-position entity))
+  (sprite-position (entity-sprite entity)))
 
 (define (set-entity-position! entity value)
-  (set-sprite-position! entity value))
+  (set-sprite-position! (entity-sprite entity) value))
 
 ;; Load a sprite and center it on the screen.
-(define *sprite*
+(define *player-sprite*
   (load-sprite "/home/zan-xhipe/projects/square-man/player.png"
                #:position (vector (/ *window-width* 2)
                                   (/ *window-height* 2))))
 
-(define *player* (make-entity *sprite* #(0 0)))
+(define *player* (make-entity *player-sprite* #(0 0)))
+
+(define *bullet-texture* (load-texture "/home/zan-xhipe/projects/square-man/bullet.png"))
+
+(define *bullets* (list))
+
+(define (shoot position)
+  (set! *bullets*
+	(cons (make-entity
+	       (make-sprite *bullet-texture*
+			    #:position position)
+	       #(0 4))
+	      *bullets*)))
 
 (define (quit-demo)
   (close-window)
@@ -43,8 +55,17 @@
 				(+ (vy (sprite-position sprite))
 				   (vy delta)))))
 
-(define (update-enity entity)
+(define (update-entity entity)
   (move-by (entity-sprite entity) (entity-velocity entity)))
+
+(define (draw-entity entity)
+  (draw-sprite (entity-sprite entity)))
+
+(define (update-bullets bullets)
+  (map update-entity bullets))
+
+(define (draw-bullets bullets)
+  (map draw-entity bullets))
 
 (define (key-down key mod unicode)
   (cond ((any-equal? key 'escape 'q)
@@ -56,12 +77,16 @@
 	((any-equal? key 's)
 	 (set-entity-velocity! *player* #(0 -1)))
 	((any-equal? key 'w)
-	 (set-entity-velocity! *player* #(0 1)))))
+	 (set-entity-velocity! *player* #(0 1)))
+	((any-equal? key 'space)
+	 (shoot (entity-position *player*)))))
 
 ;; Draw our sprite
 (define (render)
-  (draw-sprite *sprite*)
-  (update-enity *player*))
+  (draw-entity *player*)
+  (update-entity *player*)
+  (update-bullets *bullets*)
+  (draw-bullets *bullets*))
 
 ;; Register hooks. Lambdas are used as "trampolines" so that render
 ;; and key-down can be redefined later and the hooks will call the
