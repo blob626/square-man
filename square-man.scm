@@ -110,9 +110,6 @@
 (define (update-bullets! bullets)
     (map update-bullet! bullets))
 
-(define (draw-bullets bullets)
-  (map draw-entity bullets))
-
 (define (key-down key mod unicode)
   (cond ((any-equal? key 'escape 'q)
          (quit-demo))
@@ -150,5 +147,6 @@
 
 ;; Start the game loop.
 ;; The render callback will be called through this procedure.
+(set! *show-fps* #f)
 (run-game-loop)
 
