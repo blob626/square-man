@@ -150,6 +150,6 @@
 
 ;; Start the game loop.
 ;; The render callback will be called through this procedure.
-(set! *show-fps* #f)
+;(set! *show-fps* #f)
 (run-game-loop)
 
