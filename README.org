@@ -1,1 +1,7 @@
 a small game to play around with guile-2d
+
+
+* Controls
+  a,s,d,w : basic movement.
+  e : spawn enemy
+  space : shoot
