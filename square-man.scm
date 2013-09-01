@@ -47,7 +47,7 @@
 		(list (make-entity
 		       (make-sprite *bullet-texture*
 				    #:position position)
-		       (vector2 0 4))))))
+		       (vector2 0 -4))))))
 
 (define (quit-game)
   (close-window)
