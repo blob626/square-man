@@ -103,22 +103,42 @@
 (define (update-bullets! bullets)
     (map update-bullet! bullets))
 
+(define (make-move-entity player speed x y)
+  (lambda ()
+    (set-entity-velocity! player (vector2 (* speed x) (* speed y)))))
+
+(define *speed* 1)
+
+(define (make-move-player x y)
+  (make-move-entity *player* *speed* x y))
+
+(define move-player-left! (make-move-player -1 0))
+(define move-player-right! (make-move-player 1 0))
+(define move-player-up! (make-move-player 0 -1))
+(define move-player-down! (make-move-player 0 1))
+
 (define (key-down key mod unicode)
   (cond ((any-equal? key 'escape 'q)
          (quit-game))
+	
 	((any-equal? key 'a)
-	 (set-entity-velocity! *player* (vector2 -1 0)))
+	 (move-player-left!))
+	
 	((any-equal? key 'd)
-	 (set-entity-velocity! *player* (vector2 1 0)))
+	 (move-player-right!))
+	
 	((any-equal? key 's)
-	 (set-entity-velocity! *player* (vector2 0 -1)))
+	 (move-player-down!))
+	
 	((any-equal? key 'w)
-	 (set-entity-velocity! *player* (vector2 0 1)))
+	 (move-player-up!))
+	
 	((any-equal? key 'space)
 	 (shoot (entity-position *player*)))
+	
 	((any-equal? key 'e)
 	 (spawn-enemy (vector2 (- *window-width* 64)
-			      (- *window-height* 64))))))
+			       64)))))
 
 (define (update)
   (update-entity! *player*)
