@@ -54,15 +54,7 @@
   (quit))
 
 (define (move-by! sprite delta)
-<<<<<<< HEAD
   (set-sprite-position! sprite (v+ (sprite-position sprite) delta)))
-=======
-  (set-sprite-position! sprite (vector2
-				(+ (vx (sprite-position sprite))
-				   (vx delta))
-				(+ (vy (sprite-position sprite))
-				   (vy delta)))))
->>>>>>> sprite-batch
 
 (define (update-entity! entity)
   (move-by! (entity-sprite entity) (entity-velocity entity)))
@@ -76,13 +68,8 @@
 (define (move-left enemy)
   (schedule-action
    (lerp (lambda (x)
-<<<<<<< HEAD
-	   (set-entity-position! enemy (vector x (vy (entity-position enemy)))))
-	 (- *window-width* 64) 64 (seconds->ticks 3))))
-=======
 	   (set-entity-position! enemy (vector2 x (vy (entity-position enemy)))))
 	 (- *window-width* 64) 64 (seconds->timesteps 3))))
->>>>>>> sprite-batch
 
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
