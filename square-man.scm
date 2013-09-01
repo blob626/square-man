@@ -2,7 +2,7 @@
              (2d game-loop)
              (2d window)
 	     (2d helpers)
-	     (2d vector)
+	     (2d vector2)
 	     (2d texture)
 	     (2d actions)
 	     (srfi srfi-9))
@@ -28,10 +28,10 @@
 ;; Load a sprite and center it on the screen.
 (define *player-sprite*
   (load-sprite "images/player.png"
-               #:position (vector (/ *window-width* 2)
+               #:position (vector2 (/ *window-width* 2)
                                   (/ *window-height* 2))))
 
-(define *player* (make-entity *player-sprite* #(0 0)))
+(define *player* (make-entity *player-sprite* (vector2 0 0)))
 
 (define *bullet-texture* (load-texture "images/bullet.png"))
 
@@ -47,14 +47,14 @@
 		(list (make-entity
 		       (make-sprite *bullet-texture*
 				    #:position position)
-		       #(0 4))))))
+		       (vector2 0 4))))))
 
 (define (quit-demo)
   (close-window)
   (quit))
 
 (define (move-by! sprite delta)
-  (set-sprite-position! sprite (vector
+  (set-sprite-position! sprite (vector2
 				(+ (vx (sprite-position sprite))
 				   (vx delta))
 				(+ (vy (sprite-position sprite))
@@ -72,13 +72,13 @@
 (define (move-left enemy)
   (schedule-action
    (lerp (lambda (x)
-	   (set-entity-position! enemy (vector x (vy (entity-position enemy)))))
+	   (set-entity-position! enemy (vector2 x (vy (entity-position enemy)))))
 	 (- *window-width* 64) 64 (seconds->timesteps 3))))
 
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
 					 #:position position)
-			    #(0 0))))
+			    (vector2 0 0))))
     (move-left enemy)
     (set! *enemies* (append *enemies* (list enemy)))))
 
@@ -111,17 +111,17 @@
   (cond ((any-equal? key 'escape 'q)
          (quit-demo))
 	((any-equal? key 'a)
-	 (set-entity-velocity! *player* #(-1 0)))
+	 (set-entity-velocity! *player* (vector2 -1 0)))
 	((any-equal? key 'd)
-	 (set-entity-velocity! *player* #(1 0)))
+	 (set-entity-velocity! *player* (vector2 1 0)))
 	((any-equal? key 's)
-	 (set-entity-velocity! *player* #(0 -1)))
+	 (set-entity-velocity! *player* (vector2 0 -1)))
 	((any-equal? key 'w)
-	 (set-entity-velocity! *player* #(0 1)))
+	 (set-entity-velocity! *player* (vector2 0 1)))
 	((any-equal? key 'space)
 	 (shoot (entity-position *player*)))
 	((any-equal? key 'e)
-	 (spawn-enemy (vector (- *window-width* 64)
+	 (spawn-enemy (vector2 (- *window-width* 64)
 			      (- *window-height* 64))))))
 
 (define (update)
