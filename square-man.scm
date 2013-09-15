@@ -67,12 +67,6 @@
 (define (seconds->ticks seconds)
   (floor (* seconds 60)))
 
-(define (move-left enemy)
-  (schedule-action
-   (lerp (lambda (x)
-	   (set-entity-position! enemy (vector2 x (vy (entity-position enemy)))))
-	 (- *window-width* 64) 64 (seconds->ticks 3))))
-
 (define (v- . vectors)
   "subtracts vectors."
   (define (sub-vectors x y vectors)
