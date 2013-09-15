@@ -86,27 +86,27 @@
 	       (vy (car vectors)) (cdr vectors)))
 
 (define (direction-to origin target)
-  (vnorm (v- (entity-position origin) (entity-position target))))
+  (vnorm (v- (sprite-position origin) (sprite-position target))))
 
 (define (velocity-towards origin target speed)
   (vscale (direction-to target origin) speed))
 
 (define (follow origin target speed)
+  "The origin entity moves towards the target entity at given speed"
   (colambda
    ()
    (while #t
      (set-entity-velocity! origin
-			   (velocity-towards origin target speed))
+			   (velocity-towards (entity-sprite origin)
+					     (entity-sprite target) speed))
      (wait 10))))
 
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
 					 #:position position)
 			    (vector2 0 0))))
-
     (agenda-schedule
      (follow enemy *player* 0.8))
-        
     (set! *enemies* (append *enemies* (list enemy)))))
 
 (define (update-entities! entities)
