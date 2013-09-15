@@ -1,6 +1,8 @@
 (use-modules (2d sprite)
              (2d game-loop)
              (2d window)
+	     (2d coroutine)
+	     (2d agenda)
 	     (2d helpers)
 	     (2d vector2)
 	     (2d texture)
@@ -71,12 +73,44 @@
 	   (set-entity-position! enemy (vector2 x (vy (entity-position enemy)))))
 	 (- *window-width* 64) 64 (seconds->ticks 3))))
 
+(define (v- . vectors)
+  "subtracts vectors."
+  (define (sub-vectors x y vectors)
+    (cond ((null? vectors)
+           (vector2 x y))
+          (else
+           (sub-vectors (- x (vx (car vectors)))
+                        (- y (vy (car vectors)))
+                        (cdr vectors)))))
+  (sub-vectors (vx (car vectors))
+	       (vy (car vectors)) (cdr vectors)))
+
+(define (direction-to origin target)
+  (vnorm (v- (entity-position origin) (entity-position target))))
+
+(define (velocity-towards origin target speed)
+  (vscale (direction-to target origin) speed))
+
+(define (follow origin target speed)
+  (colambda
+   ()
+   (while #t
+     (set-entity-velocity! origin
+			   (velocity-towards origin target speed))
+     (wait 10))))
+
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
 					 #:position position)
 			    (vector2 0 0))))
-    (move-left enemy)
+
+    (agenda-schedule
+     (follow enemy *player* 0.8))
+        
     (set! *enemies* (append *enemies* (list enemy)))))
+
+(define (update-entities! entities)
+  (map update-entity! entities))
 
 (define (destroy-enemy enemy)
   (set! *enemies* (delete enemy *enemies*)))
@@ -142,7 +176,8 @@
 
 (define (update)
   (update-entity! *player*)
-  (update-bullets! *bullets*))
+  (update-bullets! *bullets*)
+  (update-entities! *enemies*))
 
 (define *batch* (make-sprite-batch))
 
