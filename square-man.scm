@@ -107,19 +107,24 @@
   (vscale (vector-orbit origin target) speed))
 
 (define (enemy-movement origin target)
-  (colambda
-   ()
-   (while #t
-     (set-entity-velocity!
-      origin
-      (if (closer-than (entity-position origin)
-		       (entity-position target)
-		       200)
-	  (velocity-orbit (entity-sprite origin)
-			  (entity-sprite target) 2)
-	  (velocity-towards (entity-sprite origin)
-			    (entity-sprite target) 2)))
-     (wait 1))))
+  (define (in-orbit-range?)
+    (closer-than (entity-position origin)
+		 (entity-position target)
+		 200))
+  (define (orbit-velocity)
+    (velocity-orbit (entity-sprite origin)
+		    (entity-sprite target) 2))
+  (define (towards-velocity)
+    (velocity-towards (entity-sprite origin)
+		      (entity-sprite target) 2))
+  (colambda ()
+    (while #t
+      (set-entity-velocity!
+       origin
+       (if (in-orbit-range?)
+	   (orbit-velocity)
+	   (towards-velocity)))
+      (wait 1))))
 
 (define (orbit origin target)
   (colambda
