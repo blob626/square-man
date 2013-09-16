@@ -79,21 +79,8 @@
   (sub-vectors (vx (car vectors))
 	       (vy (car vectors)) (cdr vectors)))
 
-(define (direction-to origin target)
+(define (vector-towards origin target)
   (vnorm (v- (sprite-position origin) (sprite-position target))))
-
-(define (velocity-towards origin target speed)
-  (vscale (direction-to target origin) speed))
-
-(define (follow origin target speed)
-  "The origin entity moves towards the target entity at given speed"
-  (colambda
-   ()
-   (while #t
-     (set-entity-velocity! origin
-			   (velocity-towards (entity-sprite origin)
-					     (entity-sprite target) speed))
-     (wait 10))))
 
 (define (cross a b)
   (vector2 (- (vy a) (vy b))
@@ -111,16 +98,33 @@
 (define (closer-than origin target distance)
   (<= (distance-square origin target) (square distance)))
 
-(define (orbit-direction origin target)
+(define (vector-orbit origin target)
   (vnorm (cross (sprite-position origin)
 		(sprite-position target))))
+
+(define (velocity-towards origin target speed)
+  (vscale (vector-towards target origin) speed))
+
+(define (velocity-orbit origin target speed)
+  (vscale (vector-orbit origin target) speed))
 
 (define (orbit origin target)
   (colambda
    ()
    (while #t
-     (set-entity-velocity! origin (orbit-direction (entity-sprite origin)
-						   (entity-sprite target)))
+     (set-entity-velocity! origin (velocity-orbit (entity-sprite origin)
+						  (entity-sprite target)
+						  2))
+     (wait 10))))
+
+(define (follow origin target speed)
+  "The origin entity moves towards the target entity at given speed"
+  (colambda
+   ()
+   (while #t
+     (set-entity-velocity! origin
+			   (velocity-towards (entity-sprite origin)
+					     (entity-sprite target) speed))
      (wait 10))))
 
 (define (spawn-enemy position)
