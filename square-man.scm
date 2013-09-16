@@ -99,6 +99,18 @@
   (vector2 (- (vy a) (vy b))
 	   (- (vx b) (vx a))))
 
+(define (square x)
+  (* x x))
+
+(define (distance-square a b)
+  (+ (- (square (vx a))
+	(square (vx b)))
+     (- (square (vy a))
+	(square (vy b)))))
+
+(define (closer-than origin target distance)
+  (<= (distance-square origin target) (square distance)))
+
 (define (orbit-direction origin target)
   (vnorm (cross (sprite-position origin)
 		(sprite-position target))))
