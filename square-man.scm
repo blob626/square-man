@@ -90,10 +90,8 @@
   (* x x))
 
 (define (distance-square a b)
-  (+ (- (square (vx a))
-	(square (vx b)))
-     (- (square (vy a))
-	(square (vy b)))))
+  (+ (square (- (vx a) (vx b)))
+     (square (- (vy a) (vy b)))))
 
 (define (closer-than origin target distance)
   (<= (distance-square origin target) (square distance)))
