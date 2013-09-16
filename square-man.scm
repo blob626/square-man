@@ -106,44 +106,48 @@
 (define (velocity-orbit origin target speed)
   (vscale (vector-orbit origin target) speed))
 
-(define (enemy-movement origin target)
-  (define (in-orbit-range?)
-    (closer-than (entity-position origin)
-		 (entity-position target)
-		 200))
-  (define (orbit-velocity)
-    (velocity-orbit (entity-sprite origin)
-		    (entity-sprite target) 2))
-  (define (towards-velocity)
-    (velocity-towards (entity-sprite origin)
-		      (entity-sprite target) 2))
+(define (velocity-coroutine origin function dt)
   (colambda ()
     (while #t
-      (set-entity-velocity!
-       origin
-       (if (in-orbit-range?)
-	   (orbit-velocity)
-	   (towards-velocity)))
-      (wait 1))))
+      (set-entity-velocity! origin (function))
+      (wait dt))))
+
+(define (enemy-movement origin target)
+  (let ((radius 200) (speed 2))
+    (define (in-orbit-range?)
+      (closer-than (entity-position origin)
+		   (entity-position target)
+		   radius))
+    
+    (define (orbit-velocity)
+      (velocity-orbit (entity-sprite origin)
+		      (entity-sprite target) speed))
+    
+    (define (towards-velocity)
+      (velocity-towards (entity-sprite origin)
+			(entity-sprite target) speed))
+    
+    (define (velocity)
+      (if (in-orbit-range?)
+	  (orbit-velocity)
+	  (towards-velocity)))
+
+    (velocity-coroutine origin velocity 1)))
 
 (define (orbit origin target)
-  (colambda
-   ()
-   (while #t
-     (set-entity-velocity! origin (velocity-orbit (entity-sprite origin)
-						  (entity-sprite target)
-						  2))
-     (wait 10))))
+  (define (velocity)
+    (velocity-orbit (entity-sprite origin)
+		    (entity-sprite target)
+		    2))
+  (velocity-coroutine origin velocity 10))
 
 (define (follow origin target speed)
   "The origin entity moves towards the target entity at given speed"
-  (colambda
-   ()
-   (while #t
-     (set-entity-velocity! origin
-			   (velocity-towards (entity-sprite origin)
-					     (entity-sprite target) speed))
-     (wait 10))))
+  (define (velocity)
+    (velocity-towards (entity-sprite origin)
+		      (entity-sprite target) speed))
+
+  (velocity-coroutine origin velocity 10))
 
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
