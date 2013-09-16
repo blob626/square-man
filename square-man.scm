@@ -119,7 +119,7 @@
 			  (entity-sprite target) 2)
 	  (velocity-towards (entity-sprite origin)
 			    (entity-sprite target) 2)))
-     (wait 10))))
+     (wait 1))))
 
 (define (orbit origin target)
   (colambda
