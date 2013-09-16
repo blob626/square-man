@@ -95,12 +95,28 @@
 					     (entity-sprite target) speed))
      (wait 10))))
 
+(define (cross a b)
+  (vector2 (- (vy a) (vy b))
+	   (- (vx b) (vx a))))
+
+(define (orbit-direction origin target)
+  (vnorm (cross (sprite-position origin)
+		(sprite-position target))))
+
+(define (orbit origin target)
+  (colambda
+   ()
+   (while #t
+     (set-entity-velocity! origin (orbit-direction (entity-sprite origin)
+						   (entity-sprite target)))
+     (wait 10))))
+
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
 					 #:position position)
 			    (vector2 0 0))))
     (agenda-schedule
-     (follow enemy *player* 0.8))
+     (orbit enemy *player*))
     (set! *enemies* (append *enemies* (list enemy)))))
 
 (define (update-entities! entities)
