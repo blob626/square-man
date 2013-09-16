@@ -108,6 +108,21 @@
 (define (velocity-orbit origin target speed)
   (vscale (vector-orbit origin target) speed))
 
+(define (enemy-movement origin target)
+  (colambda
+   ()
+   (while #t
+     (set-entity-velocity!
+      origin
+      (if (closer-than (entity-position origin)
+		       (entity-position target)
+		       200)
+	  (velocity-orbit (entity-sprite origin)
+			  (entity-sprite target) 2)
+	  (velocity-towards (entity-sprite origin)
+			    (entity-sprite target) 2)))
+     (wait 10))))
+
 (define (orbit origin target)
   (colambda
    ()
@@ -132,7 +147,7 @@
 					 #:position position)
 			    (vector2 0 0))))
     (agenda-schedule
-     (orbit enemy *player*))
+     (enemy-movement enemy *player*))
     (set! *enemies* (append *enemies* (list enemy)))))
 
 (define (update-entities! entities)
