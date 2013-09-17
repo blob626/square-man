@@ -1,6 +1,7 @@
 (use-modules (2d sprite)
              (2d game-loop)
              (2d window)
+	     (2d math)
 	     (2d coroutine)
 	     (2d agenda)
 	     (2d helpers)
@@ -86,6 +87,12 @@
   (vector2 (- (vy a) (vy b))
 	   (- (vx b) (vx a))))
 
+(define (rotate point angle)
+  (vector2 (- (* (vx point) (cos angle))
+	      (* (vy point) (sin angle)))
+	   (+ (* (vx point) (sin angle))
+	      (* (vy point) (cos angle)))))
+
 (define (square x)
   (* x x))
 
@@ -149,12 +156,19 @@
 
   (velocity-coroutine origin velocity 10))
 
+(define (skew origin target)
+  (define (velocity)
+    (rotate (velocity-towards (entity-sprite origin)
+			      (entity-sprite target) 2)
+	    (degrees->radians 20)))
+  (velocity-coroutine origin velocity (seconds->ticks 2)))
+
 (define (spawn-enemy position)
   (let ((enemy (make-entity (make-sprite *enemy-texture*
 					 #:position position)
 			    (vector2 0 0))))
     (agenda-schedule
-     (enemy-movement enemy *player*))
+     (skew enemy *player*))
     (set! *enemies* (append *enemies* (list enemy)))))
 
 (define (update-entities! entities)
