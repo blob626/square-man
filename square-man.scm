@@ -1,6 +1,5 @@
 (use-modules (2d sprite)
 	     (2d game)
-             (2d window)
 	     (2d math)
 	     (2d coroutine)
 	     (2d agenda)
