@@ -1,5 +1,5 @@
 (use-modules (2d sprite)
-             (2d game-loop)
+	     (2d game)
              (2d window)
 	     (2d math)
 	     (2d coroutine)
@@ -13,14 +13,14 @@
 (define *window-width* 800)
 (define *window-height* 600)
 
-;; Open the window.
-(open-window *window-width* *window-height*)
-
 (define-record-type <entity>
   (make-entity sprite velocity)
   entity?
-  (sprite entity-sprite set-entity-sprite!)
+  (sprite %entity-sprite set-entity-sprite!)
   (velocity entity-velocity set-entity-velocity!))
+
+(define (entity-sprite entity)
+  ((%entity-sprite entity)))
 
 (define (entity-position entity)
   (sprite-position (entity-sprite entity)))
@@ -28,19 +28,22 @@
 (define (set-entity-position! entity value)
   (set-sprite-position! (entity-sprite entity) value))
 
+(define (*player-texture*)
+  (load-texture "images/player.png"))
+
 ;; Load a sprite and center it on the screen.
-(define *player-sprite*
-  (load-sprite "images/player.png"
+(define (*player-sprite*)
+  (make-sprite (*player-texture*)
                #:position (vector2 (/ *window-width* 2)
 				   (/ *window-height* 2))))
 
 (define *player* (make-entity *player-sprite* (vector2 0 0)))
 
-(define *bullet-texture* (load-texture "images/bullet.png"))
+(define (*bullet-texture*) (load-texture "images/bullet.png"))
 
 (define *bullets* (list))
 
-(define *enemy-texture* (load-texture "images/enemy.png"))
+(define (*enemy-texture*) (load-texture "images/enemy.png"))
 
 (define *enemies* (list))
 
@@ -48,7 +51,7 @@
   (set! *bullets*
 	(append *bullets*
 		(list (make-entity
-		       (make-sprite *bullet-texture*
+		       (make-sprite (*bullet-texture*)
 				    #:position position)
 		       (vector2 0 -4))))))
 
@@ -164,7 +167,7 @@
   (velocity-coroutine origin velocity (seconds->ticks 2)))
 
 (define (spawn-enemy position)
-  (let ((enemy (make-entity (make-sprite *enemy-texture*
+  (let ((enemy (make-entity (make-sprite (*enemy-texture*)
 					 #:position position)
 			    (vector2 0 0))))
     (agenda-schedule
@@ -213,11 +216,12 @@
 (define move-player-up! (make-move-player 0 -1))
 (define move-player-down! (make-move-player 0 1))
 
-(define (key-down key mod unicode)
+(define (key-down state key mod unicode)
   (cond ((any-equal? key 'escape 'q)
          (quit-game))
 	
 	((any-equal? key 'a)
+	 (set-entity-velocity! *player* (vector2 -1 0))
 	 (move-player-left!))
 	
 	((any-equal? key 'd)
@@ -253,16 +257,21 @@
 	    *bullets*
 	    *enemies*))))
 
-;; Register hooks. Lambdas are used as "trampolines" so that render
-;; and key-down can be redefined later and the hooks will call the
-;; updated procedures.
-(add-hook! on-quit-hook (lambda () (quit-game)))
-(add-hook! on-render-hook (lambda () (render)))
-(add-hook! on-update-hook (lambda () (update)))
-(add-hook! on-key-down-hook (lambda (key mod unicode) (key-down key mod unicode)))
+(define-scene square-scene
+  #:title "Square"
+  #:draw (lambda (state) (render))
+  #:update (lambda (state) (update))
+  #:events (append
+	    (default-scene-events)
+	    `((start . ,(lambda (state) "Start scene\n"))
+	      (stop . ,(lambda (state) (display "stop scene\n")))
+	      (key-down . ,(lambda (state key mod unicode)
+			     (key-down state key mod unicode)))))
+  #:state #f)
 
-;; Start the game loop.
-;; The render callback will be called through this procedure.
-;(set! *show-fps* #f)
-(run-game-loop)
+(define-game square-man
+  #:title "Square-man"
+  #:first-scene square-scene)
+
+(run-game square-man)
 
