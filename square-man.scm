@@ -55,10 +55,6 @@
 				    #:position position)
 		       (vector2 0 -4))))))
 
-(define (quit-game)
-  (close-window)
-  (quit))
-
 (define (move-by! sprite delta)
   (set-sprite-position! sprite (v+ (sprite-position sprite) delta)))
 
@@ -217,10 +213,7 @@
 (define move-player-down! (make-move-player 0 1))
 
 (define (key-down state key mod unicode)
-  (cond ((any-equal? key 'escape 'q)
-         (quit-game))
-	
-	((any-equal? key 'a)
+  (cond ((any-equal? key 'a)
 	 (set-entity-velocity! *player* (vector2 -1 0))
 	 (move-player-left!))
 	
