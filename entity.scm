@@ -14,7 +14,13 @@
 	    entity-velocity
 	    set-entity-velocity!
 	    entity-position
-	    set-entity-position!))
+	    set-entity-position!
+
+	    make-move-entity
+	    move-left!
+	    move-right!
+	    move-up!
+	    move-down!))
 
 
 (define-record-type <entity>
@@ -36,3 +42,12 @@
 
 (define (draw-entity entity)
   (draw-sprite (entity-sprite entity)))
+
+(define (make-move-entity x y)
+  (lambda (entity speed)
+    (set-entity-velocity! entity (vector2 (* speed x) (* speed y)))))
+
+(define move-left! (make-move-entity -1 0))
+(define move-right! (make-move-entity 1 0))
+(define move-up! (make-move-entity 0 -1))
+(define move-down! (make-move-entity 0 1))
