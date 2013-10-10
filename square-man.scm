@@ -1,5 +1,6 @@
 (load "entity.scm")
 (load "game-state.scm")
+(load "collision.scm")
 
 (use-modules (srfi srfi-9)
 	     (2d sprite)
@@ -8,6 +9,7 @@
 	     (2d helpers)
 
 	     (square-man entity)
+	     (square-man collision)
 	     (square-man game-state))
 
 (define (player-sprite)
