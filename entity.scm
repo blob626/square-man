@@ -8,7 +8,9 @@
 
 	    update-entity!
 	    draw-entity
-	    
+
+	    entity-type
+	    set-entity-type!
 	    entity-sprite
 	    set-entity-sprite!
 	    entity-radius
@@ -26,8 +28,9 @@
 
 
 (define-record-type <entity>
-  (make-entity sprite radius velocity)
+  (make-entity type sprite radius velocity)
   entity?
+  (type entity-type set-entity-type!)
   (sprite entity-sprite set-entity-sprite!)
   (radius entity-radius set-entity-radius!)
   (velocity entity-velocity set-entity-velocity!))
