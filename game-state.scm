@@ -5,16 +5,19 @@
 	    make-game-state
 	    game-state?
 	    player
+	    food
 	    draw
 	    update))
 
 (define-record-type <game-state>
-  (make-game-state player)
+  (make-game-state player food)
   game-state?
-  (player player))
+  (player player)
+  (food food))
 
 (define (draw state)
-  (draw-entity (player state)))
+  (draw-entity (player state))
+  (for-each draw-entity (food state)))
 
 (define (update state)
   (update-entity! (player state)))
