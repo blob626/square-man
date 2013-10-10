@@ -11,6 +11,8 @@
 	    
 	    entity-sprite
 	    set-entity-sprite!
+	    entity-radius
+	    set-entity-radius!
 	    entity-velocity
 	    set-entity-velocity!
 	    entity-position
@@ -24,9 +26,10 @@
 
 
 (define-record-type <entity>
-  (make-entity sprite velocity)
+  (make-entity sprite radius velocity)
   entity?
   (sprite entity-sprite set-entity-sprite!)
+  (radius entity-radius set-entity-radius!)
   (velocity entity-velocity set-entity-velocity!))
 
 (define (entity-position entity)
