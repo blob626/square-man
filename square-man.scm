@@ -30,9 +30,15 @@
      (square (+ (entity-radius a) (entity-radius b)))))
 
 (define (collision-handler collision)
-  (and (entity? (car collision))
-       (entity? (cadr collision))
-       (quit)))
+  (define (check-type? type-a type-b)
+    (lambda (a b)
+      (or (and (eqv? (entity-type a) type-a)
+	       (eqv? (entity-type b) type-b))
+	  (and (eqv? (entity-type a) type-b)
+	       (eqv? (entity-type b) type-a)))))
+  (let ((a (car collision))
+	(b (cadr collision)))
+    (cond (((check-type? 'food 'player) a b) (quit)))))
 
 (define (state-objects state)
   (cons (player state) (food state)))
@@ -66,8 +72,12 @@
 	    `((key-down . ,(lambda (state key mod unicode)
 			     (key-down state key mod unicode)))))
   #:state  (make-game-state
-	    (make-entity (player-sprite) 16 (vector2 0 0))
-	    (list (make-entity (food-sprite (vector2 10 10)) 10 (vector2 0 0)))))
+	    (make-entity 'player
+			 (player-sprite) 16 (vector2 0 0))
+	    (list (make-entity 'food
+			       (food-sprite (vector2 10 10))
+			       10
+			       (vector2 0 0)))))
 
 (define-game square-man-game
   #:title       "Square Man"
