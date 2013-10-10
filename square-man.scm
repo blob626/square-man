@@ -31,8 +31,8 @@
 
 (define-scene scene-1
   #:title  "Sqaure man scene"
-  #:update (lambda (state) (update state))
-  #:draw   (lambda (state) (draw state))
+  #:update update
+  #:draw   draw
   #:events (append
 	    (default-scene-events)
 	    `((key-down . ,(lambda (state key mod unicode)
