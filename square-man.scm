@@ -30,15 +30,30 @@
      (square (+ (entity-radius a) (entity-radius b)))))
 
 (define (collision-handler collision)
-  (define (check-type? type-a type-b)
+  (define (match-types? type-a type-b)
     (lambda (a b)
-      (or (and (eqv? (entity-type a) type-a)
-	       (eqv? (entity-type b) type-b))
-	  (and (eqv? (entity-type a) type-b)
-	       (eqv? (entity-type b) type-a)))))
+      (or (and (check-type? a type-a)
+	       (check-type? b type-b))
+	  (and (check-type? a type-b)
+	       (check-type? b type-a)))))
+  (define (check-type? entity type)
+    (eqv? (entity-type entity) type))
   (let ((a (car collision))
 	(b (cadr collision)))
-    (cond (((check-type? 'food 'player) a b) (quit)))))
+    (cond (((match-types? 'food 'player) a b)
+	   (quit))
+	  
+	  (((match-types? 'enemy 'player) a b)
+	   #f)
+	  
+	  (((match-types? 'wall 'player) a b)
+	   #f)
+	  
+	  (((match-types? 'wall 'enemy) a b)
+	   #f)
+	  
+	  (((match-types? 'enemy 'food) a b)
+	   #f))))
 
 (define (state-objects state)
   (cons (player state) (food state)))
