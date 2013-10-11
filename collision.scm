@@ -1,7 +1,6 @@
 (define-module (square-man collision)
   #:use-module (srfi srfi-1)
   #:use-module (2d vector2)
-  #:use-module (square-man entity)
   #:export (make-collision-detection
 	    make-collision-handler
 	    make-collision-system
@@ -37,7 +36,7 @@
   (lambda (state)
     (handle (detect (objects state)))))
 
-(define (make-grid window-height window-width size)
+(define (make-grid position-proc window-height window-width size)
   (define (make-empty-grid)
     (make-array '()
 		(+ (ceiling (/ window-height size)) 1)
@@ -54,7 +53,7 @@
     (define (set-cell! value position)
       (array-set! grid value (vy position) (vx position)))
     (define (insert! entity)
-      (let ((position (position->gridtile (entity-position entity))))
+      (let ((position (position->gridtile (position-proc entity))))
 	(set-cell! (cons entity (cell-ref position)) position)))
     (define (insert-all! lst)
       (clear-grid!)

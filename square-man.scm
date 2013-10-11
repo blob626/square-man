@@ -23,7 +23,7 @@
   (load-sprite "images/bullet.png"
 	       #:position position))
 
-(define grid (make-grid *screen-height* *screen-width* 64))
+(define grid (make-grid entity-position *screen-height* *screen-width* 64))
 
 (define (collide? a b)
   (< (distance-square (entity-position a) (entity-position b))
