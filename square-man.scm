@@ -4,6 +4,7 @@
 
 (use-modules (srfi srfi-9)
 	     (2d sprite)
+	     (2d texture)
              (2d game)
              (2d vector2)
 	     (2d helpers)
@@ -23,7 +24,7 @@
   (load-sprite "images/bullet.png"
 	       #:position position))
 
-(define grid (make-grid entity-position *screen-height* *screen-width* 64))
+(define grid (make-grid entity-sprite *screen-height* *screen-width* 64))
 
 (define (collide? a b)
   (< (distance-square (entity-position a) (entity-position b))
@@ -41,7 +42,8 @@
   (let ((a (car collision))
 	(b (cadr collision)))
     (cond (((match-types? 'food 'player) a b)
-	   (quit))
+	   (quit)
+	   #f)
 	  
 	  (((match-types? 'enemy 'player) a b)
 	   #f)
@@ -92,7 +94,12 @@
 	    (list (make-entity 'food
 			       (food-sprite (vector2 10 10))
 			       10
-			       (vector2 0 0)))))
+			       (vector2 0 0))
+		  ;; (make-entity 'food
+		  ;; 	       (food-sprite (corners (player-sprite)))
+		  ;; 	       10
+		  ;; 	       (vector2 0 0))
+		  )))
 
 (define-game square-man-game
   #:title       "Square Man"
