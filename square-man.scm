@@ -26,8 +26,6 @@
 
 (define grid (make-grid entity-sprite *screen-height* *screen-width* 64))
 
-(define collide? (make-collide? entity-sprite))
-
 (define (collision-handler collision)
   (define (match-types? type-a type-b)
     (lambda (a b)
@@ -59,7 +57,7 @@
   (cons (player state) (food state)))
 
 (define collision-system
-  (make-collision-system state-objects grid collide? collision-handler))
+  (make-collision-system state-objects entity-sprite grid collision-handler))
 
 (define *player-speed* 1)
 

@@ -33,8 +33,9 @@
     (for-each handler collisions)))
 
 ;;; objects is the function which when give state returns a list of all collidable objects
-(define (make-collision-system objects broad narrow handler)
-  (define detect (make-collision-detection narrow broad))
+(define (make-collision-system objects sprite-proc broad handler)
+  (define collide? (make-collide? sprite-proc))
+  (define detect (make-collision-detection collide? broad))
   (define handle (make-collision-handler handler))
   (lambda (state)
     (handle (detect (objects state)))))
