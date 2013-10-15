@@ -32,7 +32,11 @@
   (lambda (collisions)
     (for-each handler collisions)))
 
-;;; objects is the function which when give state returns a list of all collidable objects
+;;; Returns a function that when given state calls handler on all the objects that collide
+;;; Objects is the function which when give state returns a list of all collidable object
+;;; sprite-proc is the procedure that returns the sprite when given an entity
+;;; broad is the broad-phase collision detection. this calls the spatial partioning to find possible collision.
+;;; handler is the function that determines what happens when particular objects collide
 (define (make-collision-system objects sprite-proc broad handler)
   (define collide? (make-collide? sprite-proc))
   (define detect (make-collision-detection collide? broad))
@@ -40,6 +44,7 @@
   (lambda (state)
     (handle (detect (objects state)))))
 
+;;; make a grid-based collision detection
 (define (make-grid sprite-proc window-height window-width size)
   (define (make-empty-grid)
     (make-array '()
@@ -50,8 +55,9 @@
     (vector2 (ceiling (/ (vx position) size))
 	     (ceiling (/ (vy position) size))))
 
+  (define corner (make-corners sprite-proc))
+  
   (define (corners entity)
-    (define corner (make-corners sprite-proc))
     (list ((corner entity) 'top-right)
 	  ((corner entity) 'top-left)
 	  ((corner entity) 'bottom-right)
