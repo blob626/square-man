@@ -7,6 +7,7 @@
 	    make-collision-handler
 	    make-collision-system
 	    make-grid
+	    make-collide?
 	    square
 	    distance-square))
 
@@ -127,3 +128,15 @@
 	  ((bottom-left) (corner - +))
 	  ((top-right) (corner + -))
 	  ((top-left) (corner - -)))))))
+
+(define (make-collide? sprite-proc)
+  (define corner (make-corners sprite-proc))
+  (lambda (a b)
+    (let ((top-left-a ((corner a) 'top-left))
+	  (top-left-b ((corner b) 'top-left))
+	  (bottom-right-a ((corner a) 'bottom-right))
+	  (bottom-right-b ((corner b) 'bottom-right)))
+      (not (or (< (vy bottom-right-a) (vy top-left-b))
+	       (> (vy top-left-a) (vy bottom-right-b))
+	       (< (vx bottom-right-a) (vx top-left-b))
+	       (> (vx top-left-a) (vx bottom-right-b)))))))

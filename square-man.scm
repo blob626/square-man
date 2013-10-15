@@ -26,9 +26,7 @@
 
 (define grid (make-grid entity-sprite *screen-height* *screen-width* 64))
 
-(define (collide? a b)
-  (< (distance-square (entity-position a) (entity-position b))
-     (square (+ (entity-radius a) (entity-radius b)))))
+(define collide? (make-collide? entity-sprite))
 
 (define (collision-handler collision)
   (define (match-types? type-a type-b)
