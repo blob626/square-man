@@ -5,6 +5,7 @@
   #:export (<game-state>
 	    make-game-state
 	    game-state?
+	    state-objects
 	    player
 	    food
 	    draw
@@ -18,13 +19,15 @@
 
 (define *sprite-batch* (make-sprite-batch))
 
+(define (state-objects state)
+  (cons (player state) (food state)))
+
 (define (draw state)
   (with-sprite-batch *sprite-batch*
     (for-each
      (lambda (entity)
        (draw-entity entity))
-     (cons (player state)
-	   (food state)))))
+     (state-objects state))))
 
 (define (update state)
   (update-entity! (player state)))

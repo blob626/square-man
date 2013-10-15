@@ -53,12 +53,8 @@
 	  (((match-types? 'enemy 'food) a b)
 	   #f))))
 
-(define (state-objects state)
-  (cons (player state) (food state)))
-
 (define collision-system
   (make-collision-system state-objects entity-sprite grid collision-handler))
-
 (define *player-speed* 1)
 
 (define (key-down state key mod unicode)
