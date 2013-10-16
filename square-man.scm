@@ -91,7 +91,7 @@
 	    (make-entity 'player
 			 (player-sprite) (vector2 0 0))
 	    (list (make-entity 'food
-			       (food-sprite (vector2 10 10))
+			       (food-sprite (vector2 200 200))
 			       (vector2 0 0)))))
 
 (define-game square-man-game
