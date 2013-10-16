@@ -54,12 +54,12 @@
 	   #f))))
 
 (define collision-handler (make-collision-handler
-			   (lambda (x)
-			     (display "start collision\n"))
-			   (lambda (x)
-			     (display "during collision\n"))
-			   (lambda (x)
-			     (display "end collision\n"))))
+			   #:start (lambda (x)
+				     (display "start collision\n"))
+			   #:during (lambda (x)
+			   	      (display "during collision\n"))
+			   #:end (lambda (x)
+				   (display "end collision\n"))))
 
 (define collision-system
   (make-collision-system state-objects entity-sprite grid collision-handler))

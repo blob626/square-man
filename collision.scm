@@ -28,7 +28,11 @@
 	      (value-or-#f (narrow-phase possible)))
 	    (broad objects)))))
 
-(define (make-collision-handler start during end)
+(define* (make-collision-handler #:optional #:key
+				(start (lambda (collisions) #f))
+				(during (lambda (collisions) #f))
+				(end (lambda (collisions) #f)))
+  "Returns a new collision handler"
   (let ((previous-collisions (list)))
  
     (define (remove-previous-collision! collision)
