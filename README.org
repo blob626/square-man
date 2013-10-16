@@ -1,7 +1,6 @@
 a small game to play around with guile-2d
 
+run square-man.scm to play
 
 * Controls
   a,s,d,w : basic movement.
-  e : spawn enemy
-  space : shoot
