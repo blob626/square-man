@@ -3,6 +3,7 @@
   #:use-module (2d vector2)
   #:use-module (2d sprite)
   #:use-module (2d texture)
+  #:use-module (square-man entity)
   #:export (make-collision-detection
 	    make-collision-handler
 	    make-collision-system
@@ -109,25 +110,30 @@ SIZE is the size of a grid cell in pixels. "
    
     (define (cell-ref position)
       (array-ref grid (vy position) (vx position)))
+    
     (define (set-cell! value position)
       (array-set! grid value (vy position) (vx position)))
 
     (define (insert! entity)
       (for-each (lambda (position)
-		  (let ((gridpos (position->gridtile position)))
-		    (set-cell! (cons entity (cell-ref gridpos)) gridpos)))
-		(corners entity)))
+		  (set-cell! (cons entity (cell-ref position)) position))
+		(delete-duplicates
+		 (map position->gridtile (corners entity)))))
+    
     (define (insert-all! lst)
       (clear-grid!)
       (for-each insert! lst))
+
     (define (clear-grid!)
       (set! grid (make-empty-grid)))
+    
     (define (possible-collisions)
       (let ((possible '()))
 	(array-for-each (lambda (cell)
 			  (set! possible (cons cell possible)))
 			grid)
 	possible))
+    
     (lambda (objects)
       (insert-all! objects)
       (possible-collisions))))
