@@ -89,16 +89,10 @@
 			     (key-down state key mod unicode)))))
   #:state  (make-game-state
 	    (make-entity 'player
-			 (player-sprite) 16 (vector2 0 0))
+			 (player-sprite) (vector2 0 0))
 	    (list (make-entity 'food
 			       (food-sprite (vector2 10 10))
-			       10
-			       (vector2 0 0))
-		  ;; (make-entity 'food
-		  ;; 	       (food-sprite (corners (player-sprite)))
-		  ;; 	       10
-		  ;; 	       (vector2 0 0))
-		  )))
+			       (vector2 0 0)))))
 
 (define-game square-man-game
   #:title       "Square Man"
