@@ -26,7 +26,7 @@
 
 (define grid (make-grid entity-sprite *screen-height* *screen-width* 64))
 
-(define (collision-handler collision)
+(define (collision-start collision)
   (define (match-types? type-a type-b)
     (lambda (a b)
       (or (and (check-type? a type-a)
@@ -35,10 +35,10 @@
 	       (check-type? b type-a)))))
   (define (check-type? entity type)
     (eqv? (entity-type entity) type))
+  (display "Collision start\n")
   (let ((a (car collision))
 	(b (cadr collision)))
     (cond (((match-types? 'food 'player) a b)
-	   (quit)
 	   #f)
 	  
 	  (((match-types? 'enemy 'player) a b)
@@ -53,8 +53,17 @@
 	  (((match-types? 'enemy 'food) a b)
 	   #f))))
 
+(define collision-handler (make-collision-handler
+			   (lambda (x)
+			     (display "start collision\n"))
+			   (lambda (x)
+			     (display "during collision\n"))
+			   (lambda (x)
+			     (display "end collision\n"))))
+
 (define collision-system
   (make-collision-system state-objects entity-sprite grid collision-handler))
+
 (define *player-speed* 1)
 
 (define (key-down state key mod unicode)

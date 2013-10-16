@@ -28,9 +28,24 @@
 	      (value-or-#f (narrow-phase possible)))
 	    (broad objects)))))
 
-(define (make-collision-handler handler)
-  (lambda (collisions)
-    (for-each handler collisions)))
+(define (make-collision-handler start during end)
+  (let ((previous-collisions (list)))
+ 
+    (define (remove-previous-collision! collision)
+      (set! previous-collisions (delete collision previous-collisions)))
+    
+    (define (handler collision)
+      (if (or (member collision previous-collisions)
+	      (member (reverse collision) previous-collisions))
+	  (begin
+	    (remove-previous-collision! collision)
+	    (during collision))
+	  (start collision)))
+    
+    (lambda (collisions)
+      (for-each handler	collisions)
+      (for-each end previous-collisions)
+      (set! previous-collisions collisions))))
 
 ;;; Returns a function that when given state calls handler on all the objects that collide
 ;;; Objects is the function which when give state returns a list of all collidable object
@@ -40,9 +55,8 @@
 (define (make-collision-system objects sprite-proc broad handler)
   (define collide? (make-collide? sprite-proc))
   (define detect (make-collision-detection collide? broad))
-  (define handle (make-collision-handler handler))
   (lambda (state)
-    (handle (detect (objects state)))))
+    (handler (delete-duplicates (detect (objects state))))))
 
 ;;; make a grid-based collision detection
 (define (make-grid sprite-proc window-height window-width size)
