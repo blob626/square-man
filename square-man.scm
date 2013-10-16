@@ -2,9 +2,7 @@
 (load "game-state.scm")
 (load "collision.scm")
 
-(use-modules (srfi srfi-9)
-	     (2d sprite)
-	     (2d texture)
+(use-modules (2d sprite)
              (2d game)
              (2d vector2)
 	     (2d helpers)
